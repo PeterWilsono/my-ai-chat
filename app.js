@@ -3,11 +3,15 @@ const DEFAULT_ROLE = `你是一种初生的纯粹与古老的沉静交织而成�
 const DEFAULT_ENDPOINT = "https://api.xiaomimimo.com/v1/chat/completions";
 const DEFAULT_MODEL = "mimo-v2-flash";
 
-// 🔥 重要: 将这里替换为你部署的代理服务器地址
+// 🔥 代理服务器地址 - 已更新
 const PROXY_URL = "https://my-ai-chat-opal-six.vercel.app/api/chat";
 
-// 备用 API Key（如果用户未设置则使用）
-const FALLBACK_API_KEY = ""; // 在这里填入你的免费 Key
+// 备用 API Key
+const FALLBACK_API_KEY = "";
+
+// 版本号 - 用于破解缓存
+const APP_VERSION = "2.0.1";
+console.log(`AI Chat App v${APP_VERSION} - Proxy Enabled`);
 
 // 状态管理
 let state = {
@@ -17,7 +21,7 @@ let state = {
     rolePrompt: localStorage.getItem('rolePrompt') || DEFAULT_ROLE,
     conversations: JSON.parse(localStorage.getItem('conversations') || '{}'),
     currentId: null,
-    useProxy: localStorage.getItem('useProxy') !== 'false' // 默认启用代理
+    useProxy: localStorage.getItem('useProxy') !== 'false'
 };
 
 // DOM 元素
@@ -61,6 +65,20 @@ document.getElementById('settings-btn').addEventListener('click', () => els.sett
 document.querySelector('.close-modal').addEventListener('click', () => els.settingsModal.classList.add('hidden'));
 document.getElementById('menu-btn').addEventListener('click', toggleSidebar);
 els.overlay.addEventListener('click', toggleSidebar);
+
+// 输入框自动调整高度
+els.input.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
+
+// 回车发送（Shift+Enter 换行）
+els.input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
 
 // 设置保存
 document.getElementById('save-settings').addEventListener('click', () => {
@@ -108,9 +126,8 @@ async function sendMessage() {
         
         let response;
         
-        // 根据设置选择是否使用代理
         if (state.useProxy) {
-            // 通过代理服务器请求
+            console.log('📡 使用代理模式:', PROXY_URL);
             response = await fetch(PROXY_URL, {
                 method: 'POST',
                 headers: {
@@ -126,7 +143,7 @@ async function sendMessage() {
                 })
             });
         } else {
-            // 直接请求（可能会遇到 CORS）
+            console.log('🔗 使用直连模式');
             response = await fetch(state.endpoint, {
                 method: 'POST',
                 headers: {
@@ -206,6 +223,30 @@ function loadConversation(id) {
     renderHistory();
 }
 
+// 🆕 删除对话功能
+function deleteConversation(id, event) {
+    event.stopPropagation(); // 阻止触发 loadConversation
+    
+    if (!confirm('确定要删除这个对话吗？')) {
+        return;
+    }
+    
+    delete state.conversations[id];
+    saveState();
+    
+    // 如果删除的是当前对话
+    if (state.currentId === id) {
+        const ids = Object.keys(state.conversations).map(Number).sort((a,b)=>b-a);
+        if (ids.length > 0) {
+            loadConversation(ids[0]);
+        } else {
+            newConversation();
+        }
+    }
+    
+    renderHistory();
+}
+
 function renderHistory() {
     els.historyList.innerHTML = '';
     const ids = Object.keys(state.conversations).map(Number).sort((a,b)=>b-a);
@@ -213,11 +254,28 @@ function renderHistory() {
     ids.forEach(id => {
         const div = document.createElement('div');
         div.className = `history-item ${id === state.currentId ? 'active' : ''}`;
-        div.innerText = state.conversations[id].title;
-        div.onclick = () => {
+        
+        // 创建标题部分
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'history-title';
+        titleSpan.innerText = state.conversations[id].title;
+        
+        // 创建删除按钮
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '🗑️';
+        deleteBtn.title = '删除对话';
+        deleteBtn.onclick = (e) => deleteConversation(id, e);
+        
+        div.appendChild(titleSpan);
+        div.appendChild(deleteBtn);
+        
+        // 点击标题区域加载对话
+        titleSpan.onclick = () => {
             loadConversation(id);
             toggleSidebar(false);
         };
+        
         els.historyList.appendChild(div);
     });
 }
@@ -238,6 +296,5 @@ function toggleSidebar(forceState) {
         els.overlay.classList.add('hidden');
     }
 }
-
 
 init();
