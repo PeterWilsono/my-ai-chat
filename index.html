@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的智能助手</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="apple-touch-icon" href="icon.png"> 
+    </head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <button id="menu-btn">☰</button>
+            <span id="chat-title">新对话</span>
+        </div>
+        <div class="header-right">
+            <button id="new-chat-btn">➕</button>
+            <button id="settings-btn">⚙️</button>
+        </div>
+    </header>
+
+    <div id="sidebar" class="sidebar hidden">
+        <div class="sidebar-header">历史记录</div>
+        <div id="history-list">
+            </div>
+    </div>
+    <div id="overlay" class="overlay hidden"></div>
+
+    <main id="chat-container">
+        <div class="welcome-message">
+            <h3>👋 你好！</h3>
+            <p>我是你的智能助手，请在下方输入内容开始对话。</p>
+        </div>
+        </main>
+
+    <footer>
+        <div class="input-area">
+            <textarea id="user-input" placeholder="输入消息..." rows="1"></textarea>
+            <button id="send-btn">发送</button>
+        </div>
+    </footer>
+
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ 设置</h2>
+                <button class="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <label>API Key (必填):</label>
+                <input type="password" id="api-key" placeholder="sk-...">
+                
+                <label>API 端点:</label>
+                <input type="text" id="api-endpoint" value="https://api.xiaomimimo.com/v1/chat/completions">
+                
+                <label>模型:</label>
+                <input type="text" id="api-model" value="mimo-v2-flash">
+                
+                <label>AI 角色设定:</label>
+                <textarea id="role-prompt" rows="6"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings">保存并关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // 注册 Service Worker 实现离线访问
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('Service Worker Registered'));
+        }
+    </script>
+</body>
+</html>
