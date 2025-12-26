@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2c3e50">
     <link rel="apple-touch-icon" href="icon.png"> 
-    </head>
+</head>
 <body>
 
     <header>
@@ -22,10 +22,9 @@
         </div>
     </header>
 
-    <div id="sidebar" class="sidebar">  <!-- 移除初始hidden类，由JS控制 -->
+    <div id="sidebar" class="sidebar">
         <div class="sidebar-header">历史记录</div>
-        <div id="history-list">
-            </div>
+        <div id="history-list"></div>
     </div>
     <div id="overlay" class="overlay hidden"></div>
 
@@ -34,7 +33,7 @@
             <h3>👋 你好！</h3>
             <p>我是你的智能助手，请在下方输入内容开始对话。</p>
         </div>
-        </main>
+    </main>
 
     <footer>
         <div class="input-area">
@@ -59,6 +58,14 @@
                 <label>模型:</label>
                 <input type="text" id="api-model" value="mimo-v2-flash">
                 
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="use-proxy" checked>
+                        <span>使用代理服务器（推荐，解决CORS问题）</span>
+                    </label>
+                    <p class="hint">💡 如遇到跨域错误，请勾选此项</p>
+                </div>
+                
                 <label>AI 角色设定:</label>
                 <textarea id="role-prompt" rows="6"></textarea>
             </div>
@@ -70,7 +77,6 @@
 
     <script src="app.js"></script>
     <script>
-        // 注册 Service Worker 实现离线访问
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
                 .then(() => console.log('Service Worker Registered'));

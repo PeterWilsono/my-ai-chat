@@ -1,0 +1,24 @@
+{
+    "name": "ai-chat-proxy",
+    "version": "1.0.0",
+    "description": "CORS proxy for AI chat application",
+    "main": "proxy-server.js",
+    "scripts": {
+      "start": "node proxy-server.js",
+      "dev": "nodemon proxy-server.js"
+    },
+    "keywords": ["proxy", "cors", "ai", "chat"],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+      "express": "^4.18.2",
+      "cors": "^2.8.5",
+      "node-fetch": "^2.7.0"
+    },
+    "devDependencies": {
+      "nodemon": "^3.0.1"
+    },
+    "engines": {
+      "node": ">=14.x"
+    }
+  }
