@@ -35,8 +35,43 @@ textarea { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 1
 .sidebar.open { transform: translateX(0); }
 .sidebar-header { padding: 15px; background: #2c3e50; color: white; font-weight: bold; }
 #history-list { overflow-y: auto; flex: 1; }
-.history-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item { 
+    padding: 12px 15px; 
+    border-bottom: 1px solid #eee; 
+    cursor: pointer; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+}
+.history-item:hover { background: #f8f8f8; }
 .history-item.active { background: #f0f0f0; border-left: 4px solid var(--primary-color); }
+
+.history-title {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    opacity: 0.6;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    background: #ff4444;
+    transform: scale(1.1);
+}
 .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 150; }
 .hidden { display: none !important; }
 
