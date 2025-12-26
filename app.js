@@ -70,8 +70,13 @@ document.getElementById('save-settings').addEventListener('click', () => {
     localStorage.setItem('model', state.model);
     localStorage.setItem('rolePrompt', state.rolePrompt);
     
+    // 1. 先关闭弹窗 (视觉上立即响应)
     els.settingsModal.classList.add('hidden');
-    alert('设置已保存');
+    
+    // 2. 稍微延迟一点点再弹窗提示，避免卡顿
+    setTimeout(() => {
+        alert('设置已保存');
+    }, 100);
 });
 
 // 核心逻辑：发送消息
