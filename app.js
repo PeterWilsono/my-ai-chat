@@ -107,10 +107,10 @@ async function sendMessage() {
         
         const response = await fetch(state.endpoint, {
             method: 'POST',
-            mode: 'cors',  // 添加以启用CORS
+            mode: 'cors',  // 保持以启用CORS
             headers: {
                 'Content-Type': 'application/json',
-                'api-key': state.apiKey  // 移除可能冲突的Authorization，只保留api-key
+                'Authorization': `Bearer ${state.apiKey}`  // 只用Authorization方式，避免冲突
             },
             body: JSON.stringify({
                 model: state.model,
@@ -120,7 +120,10 @@ async function sendMessage() {
             })
         });
 
-        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+        if (!response.ok) {
+            const errorText = await response.text();  // 尝试读取错误响应体
+            throw new Error(`API Error: ${response.status} - ${errorText || 'No details'}`);
+        }
         
         const data = await response.json();
         const aiText = data.choices[0].message.content;
@@ -130,8 +133,8 @@ async function sendMessage() {
         saveState();
         
     } catch (e) {
-        appendMessage('assistant', `⚠️ 出错了: ${e.message}. 请检查API Key、网络连接，或控制台日志以获取更多细节。`);
-        console.error('Fetch error details:', e);  // 添加控制台日志以便调试
+        appendMessage('assistant', `⚠️ 出错了: ${e.message}. 如果是CORS问题，请检查控制台（F12）日志，可能API不支持浏览器直接跨域调用。否则确认API Key和网络。`);
+        console.error('Fetch error details:', e);  // 详细日志
     } finally {
         els.sendBtn.disabled = false;
         els.sendBtn.innerText = '发送';
