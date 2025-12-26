@@ -71,8 +71,8 @@ main {
     display: flex; 
     flex-direction: column; 
     gap: 15px;
-    /* 确保可以滚动到底部，避免被输入框遮挡 */
-    padding-bottom: 20px;
+    /* 确保可以滚动到底部，避免被输入框遮挡 - 预留输入框高度 */
+    padding-bottom: 90px;
     /* 平滑滚动 */
     scroll-behavior: smooth;
     /* iOS 弹性滚动 */
