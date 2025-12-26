@@ -38,7 +38,7 @@ textarea { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 1
 .history-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .history-item.active { background: #f0f0f0; border-left: 4px solid var(--primary-color); }
 .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 150; }
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 /* 弹窗 */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; display: flex; justify-content: center; align-items: center; }
