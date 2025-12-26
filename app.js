@@ -10,8 +10,8 @@ const PROXY_URL = "https://my-ai-chat-opal-six.vercel.app/api/chat";
 const FALLBACK_API_KEY = "";
 
 // 版本号 - 用于破解缓存
-const APP_VERSION = "2.0.1";
-console.log(`AI Chat App v${APP_VERSION} - Proxy Enabled`);
+const APP_VERSION = "2.0.2";
+console.log(`AI Chat App v${APP_VERSION} - Mobile Optimized`);
 
 // 状态管理
 let state = {
@@ -35,6 +35,16 @@ const els = {
     sidebar: document.getElementById('sidebar'),
     overlay: document.getElementById('overlay')
 };
+
+// 滚动到底部的辅助函数
+function scrollToBottom(smooth = true) {
+    setTimeout(() => {
+        els.chatContainer.scrollTo({
+            top: els.chatContainer.scrollHeight,
+            behavior: smooth ? 'smooth' : 'auto'
+        });
+    }, 100);
+}
 
 // 初始化
 function init() {
@@ -80,6 +90,14 @@ els.input.addEventListener('keydown', function(e) {
     }
 });
 
+// 阻止输入框聚焦时的页面缩放（移动端优化）
+els.input.addEventListener('focus', function() {
+    // 移动端键盘弹出时，稍微延迟滚动确保输入框可见
+    setTimeout(() => {
+        this.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 300);
+});
+
 // 设置保存
 document.getElementById('save-settings').addEventListener('click', () => {
     state.apiKey = document.getElementById('api-key').value.trim() || FALLBACK_API_KEY;
@@ -116,6 +134,9 @@ async function sendMessage() {
     els.input.style.height = 'auto';
     els.sendBtn.disabled = true;
     els.sendBtn.innerText = '思考中...';
+    
+    // 立即滚动到底部显示用户消息
+    scrollToBottom();
     
     const currentConv = state.conversations[state.currentId];
     currentConv.messages.push({role: 'user', content: text});
@@ -171,6 +192,9 @@ async function sendMessage() {
         currentConv.messages.push({role: 'assistant', content: aiText});
         saveState();
         
+        // AI 回复后滚动到底部
+        scrollToBottom();
+        
     } catch (e) {
         let errorMsg = `⚠️ 出错了: ${e.message}`;
         
@@ -179,6 +203,7 @@ async function sendMessage() {
         }
         
         appendMessage('assistant', errorMsg);
+        scrollToBottom();
         console.error('Fetch error details:', e);
     } finally {
         els.sendBtn.disabled = false;
@@ -192,7 +217,9 @@ function appendMessage(role, text) {
     div.className = `message ${role}`;
     div.innerHTML = text.replace(/\n/g, '<br>'); 
     els.chatContainer.appendChild(div);
-    els.chatContainer.scrollTop = els.chatContainer.scrollHeight;
+    
+    // 消息添加后自动滚动
+    scrollToBottom();
 }
 
 function newConversation() {
@@ -217,9 +244,17 @@ function loadConversation(id) {
     
     if(conv.messages.length === 0) {
         els.chatContainer.innerHTML = '<div class="welcome-message"><h3>👋 新对话</h3></div>';
+    } else {
+        conv.messages.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = `message ${msg.role}`;
+            div.innerHTML = msg.content.replace(/\n/g, '<br>');
+            els.chatContainer.appendChild(div);
+        });
     }
     
-    conv.messages.forEach(msg => appendMessage(msg.role, msg.content));
+    // 加载对话后滚动到底部（不使用平滑滚动，立即显示最新消息）
+    scrollToBottom(false);
     renderHistory();
 }
 
