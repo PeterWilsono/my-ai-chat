@@ -75,11 +75,26 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=2.0.1"></script>
     <script>
+        // 清理旧缓存
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js')
-                .then(() => console.log('Service Worker Registered'));
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+            caches.keys().then(function(names) {
+                for (let name of names) caches.delete(name);
+            });
+        }
+        
+        // 强制刷新提示
+        const lastVersion = localStorage.getItem('app_version');
+        const currentVersion = '2.0.1';
+        if (lastVersion !== currentVersion) {
+            console.log('🔄 检测到新版本，已清理缓存');
+            localStorage.setItem('app_version', currentVersion);
         }
     </script>
 </body>
