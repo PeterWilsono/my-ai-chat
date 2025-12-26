@@ -4,7 +4,7 @@ const DEFAULT_ENDPOINT = "https://api.xiaomimimo.com/v1/chat/completions";
 const DEFAULT_MODEL = "mimo-v2-flash";
 
 // 🔥 重要: 将这里替换为你部署的代理服务器地址
-const PROXY_URL = "https://your-proxy-server.vercel.app/api/chat";
+const PROXY_URL = "https://my-ai-chat-opal-six.vercel.app/api/chat";
 
 // 备用 API Key（如果用户未设置则使用）
 const FALLBACK_API_KEY = ""; // 在这里填入你的免费 Key
@@ -238,5 +238,6 @@ function toggleSidebar(forceState) {
         els.overlay.classList.add('hidden');
     }
 }
+
 
 init();
