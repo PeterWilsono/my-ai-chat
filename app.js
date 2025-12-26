@@ -107,10 +107,10 @@ async function sendMessage() {
         
         const response = await fetch(state.endpoint, {
             method: 'POST',
+            mode: 'cors',  // 添加以启用CORS
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${state.apiKey}`,
-                'api-key': state.apiKey
+                'api-key': state.apiKey  // 移除可能冲突的Authorization，只保留api-key
             },
             body: JSON.stringify({
                 model: state.model,
@@ -130,7 +130,8 @@ async function sendMessage() {
         saveState();
         
     } catch (e) {
-        appendMessage('assistant', `⚠️ 出错了: ${e.message}. 请检查API Key或网络连接。`);
+        appendMessage('assistant', `⚠️ 出错了: ${e.message}. 请检查API Key、网络连接，或控制台日志以获取更多细节。`);
+        console.error('Fetch error details:', e);  // 添加控制台日志以便调试
     } finally {
         els.sendBtn.disabled = false;
         els.sendBtn.innerText = '发送';
@@ -198,9 +199,11 @@ function toggleSidebar(forceState) {
     const isOpen = typeof forceState === 'boolean' ? forceState : !els.sidebar.classList.contains('open');
     if (isOpen) {
         els.sidebar.classList.add('open');
+        els.sidebar.classList.remove('hidden');  // 移除hidden以显示侧边栏
         els.overlay.classList.remove('hidden');
     } else {
         els.sidebar.classList.remove('open');
+        els.sidebar.classList.add('hidden');  // 添加hidden以隐藏侧边栏
         els.overlay.classList.add('hidden');
     }
 }
